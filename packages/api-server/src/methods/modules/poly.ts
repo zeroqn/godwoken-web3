@@ -300,6 +300,7 @@ async function saveAddressMapping(
 }
 
 function parseError(error: any): void {
+  console.log(error);
   const prefix = "JSONRPCError: server error ";
   let message: string = error.message;
   if (message.startsWith(prefix)) {
