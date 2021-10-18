@@ -2,6 +2,7 @@ import { RPC } from "ckb-js-toolkit";
 import { RpcError } from "../error";
 import { GW_RPC_REQUEST_ERROR } from "../error-code";
 import { middleware } from "../validator";
+import abiCoder, { AbiCoder } from "web3-eth-abi";
 
 export class Gw {
   private rpc: RPC;
@@ -228,9 +229,10 @@ function parseError(error: any): void {
   let message: string = error.message;
   if (message.startsWith(prefix)) {
     const jsonErr = message.slice(prefix.length);
-    console.log(jsonErr);
     const err = JSON.parse(jsonErr);
-    throw new RpcError(err.code, err.message);
+    const abi = abiCoder as unknown;
+    const return_data = (abi as AbiCoder).decodeParameter("string", err.data.return_data.substring(10));
+    throw new RpcError(err.code, err.message, return_data);
   }
 
   // connection error
