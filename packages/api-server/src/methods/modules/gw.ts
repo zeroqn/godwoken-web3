@@ -228,6 +228,7 @@ function parseError(error: any): void {
   let message: string = error.message;
   if (message.startsWith(prefix)) {
     const jsonErr = message.slice(prefix.length);
+    console.log(jsonErr);
     const err = JSON.parse(jsonErr);
     throw new RpcError(err.code, err.message);
   }
