@@ -3,6 +3,10 @@ import { RpcError } from "../error";
 import { GW_RPC_REQUEST_ERROR } from "../error-code";
 import { middleware } from "../validator";
 import abiCoder, { AbiCoder } from "web3-eth-abi";
+import {
+  LogItem,
+  PolyjuiceSystemLog,
+} from "../types";
 
 export class Gw {
   private rpc: RPC;
@@ -224,15 +228,37 @@ export class Gw {
   }
 }
 
+function parsePolyjuiceSystemLog(logItem: LogItem): PolyjuiceSystemLog {
+  let buf = Buffer.from(logItem.data.slice(2), "hex");
+  if (buf.length !== 8 + 8 + 16 + 4 + 4) {
+    throw new Error(`invalid system log raw data length: ${buf.length}`);
+  }
+  const gasUsed = buf.readBigUInt64LE(0);
+  const cumulativeGasUsed = buf.readBigUInt64LE(8);
+  const createdAddress = "0x" + buf.slice(16, 32).toString("hex");
+  const statusCode = buf.readUInt32LE(32);
+  return {
+    gasUsed: gasUsed,
+    cumulativeGasUsed: cumulativeGasUsed,
+    createdAddress: createdAddress,
+    statusCode: statusCode,
+  };
+}
+
 function parseError(error: any): void {
   const prefix = "JSONRPCError: server error ";
   let message: string = error.message;
   if (message.startsWith(prefix)) {
     const jsonErr = message.slice(prefix.length);
     const err = JSON.parse(jsonErr);
+    const polyjuiceSystemLog = parsePolyjuiceSystemLog(err.data.last_log);
     const abi = abiCoder as unknown;
-    const return_data = (abi as AbiCoder).decodeParameter("string", err.data.return_data.substring(10));
-    throw new RpcError(err.code, err.message, return_data);
+    const statusReason = (abi as AbiCoder).decodeParameter("string", err.data.return_data.substring(10));
+    const errorReceipt = {
+        status_code: polyjuiceSystemLog.statusCode,
+        status_reason: statusReason
+    }
+    throw new RpcError(err.code, JSON.stringify(errorReceipt));
   }
 
   // connection error
