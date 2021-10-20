@@ -1,5 +1,5 @@
 import { Hash, HexNumber, HexString } from "@ckb-lumos/base";
-import { Block, Transaction, Log } from "./types";
+import { Block, Transaction, Log, ErrorTransactionReceipt } from "./types";
 import Knex, { Knex as KnexType } from "knex";
 import { LogQueryOption } from "./types";
 import { FilterTopic } from "../cache/types";
@@ -209,11 +209,23 @@ export class Query {
       return undefined;
     }
 
-    const logs = await this.knex<Log>("logs").where({
-      transaction_hash: txHash,
-    });
+    const logs = await this.knex<Log>("logs").where({ transaction_hash: txHash, });
 
     return [formatTransaction(tx), logs.map((log) => formatLog(log))];
+  }
+
+  async getErrorTransactionReceipt(
+    txHash: Hash
+  ): Promise<ErrorTransactionReceipt | undefined> {
+    const receipt = await this.knex<ErrorTransactionReceipt>("error_transactions")
+      .where("hash", txHash)
+      .first();
+
+    if (receipt == null) {
+      return undefined;
+    }
+
+    return receipt;
   }
 
   private async queryLogsByBlockHash(

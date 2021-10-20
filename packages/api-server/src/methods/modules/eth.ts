@@ -32,6 +32,7 @@ import {
   toApiLog,
   toApiTransaction,
   toApiTransactionReceipt,
+  ErrorTransactionReceipt,
 } from "../../db/types";
 import {
   HeaderNotFoundError,
@@ -433,7 +434,8 @@ export class Eth {
 
       return "0x" + BigInt(polyjuiceSystemLog.gasUsed).toString(16);
     } catch (error) {
-      throw new Web3Error(error.message);
+      return "0x" + BigInt(100000000000).toString(16);
+      // throw new Web3Error(error.message);
     }
   }
 
@@ -648,7 +650,7 @@ export class Eth {
 
   async getTransactionReceipt(
     args: [string]
-  ): Promise<EthTransactionReceipt | null> {
+  ): Promise<EthTransactionReceipt | ErrorTransactionReceipt | null> {
     const txHash: Hash = args[0];
 
     const data = await this.query.getTransactionAndLogsByHash(txHash);
@@ -657,6 +659,11 @@ export class Eth {
       const apiLogs = logs.map((log) => toApiLog(log));
       const transactionReceipt = toApiTransactionReceipt(tx, apiLogs);
       return transactionReceipt;
+    }
+
+    const errorReceipt = await this.query.getErrorTransactionReceipt(txHash);
+    if (errorReceipt != undefined) {
+      return errorReceipt;
     }
 
     const godwokenTxWithStatus = await this.rpc.getTransaction(txHash);
@@ -1114,25 +1121,29 @@ async function ethCallTx(
   }
 
   const rawL2Transaction = await buildEthCallTx(txCallObj, rpc);
-  const runResult = await rpc.executeRawL2Transaction(
+  try {
+    const runResult = await rpc.executeRawL2Transaction(
     rawL2Transaction,
     blockNumber
-  );
+    );
 
-  const abiItem = abi.get_interested_abi_item_by_encoded_data(data);
+    const abiItem = abi.get_interested_abi_item_by_encoded_data(data);
 
-  if (abiItem && isEthWallet) {
-    const returnDataWithShortAddress =
-      await abi.refactor_return_value_with_short_address(
-        runResult.return_data,
-        abiItem,
-        gwToEthAddr
-      );
-    // replace return_data
-    runResult.return_data = returnDataWithShortAddress;
+    if (abiItem && isEthWallet) {
+        const returnDataWithShortAddress =
+        await abi.refactor_return_value_with_short_address(
+            runResult.return_data,
+            abiItem,
+            gwToEthAddr
+        );
+        // replace return_data
+        runResult.return_data = returnDataWithShortAddress;
+    }
+
+    return runResult;
+  } catch (error) {
+    throw(error);
   }
-
-  return runResult;
 }
 
 async function buildEthCallTx(

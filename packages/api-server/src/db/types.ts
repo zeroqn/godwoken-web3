@@ -67,6 +67,16 @@ export interface Log {
   topics: HexString[];
 }
 
+export interface ErrorTransactionReceipt {
+  id: bigint;
+  transaction_hash: Hash;
+  block_number: bigint;
+  cumulative_gas_used: bigint;
+  gas_used: bigint;
+  status_code: number;
+  status_reason: HexString;
+}
+
 export function toApiBlock(
   b: Block,
   transactions: (EthTransaction | Hash)[] = []
