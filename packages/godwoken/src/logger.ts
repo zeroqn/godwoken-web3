@@ -1,5 +1,6 @@
 import util from "util";
 import winston, { format } from "winston";
+import LokiTransport from 'winston-loki';
 
 // Don't import from `envConfig`
 const loggerEnv: { [key: string]: string | undefined } = {
@@ -33,11 +34,20 @@ if (loggerEnv.logFormat === "json") {
   );
 }
 
+const loki = new LokiTransport({
+    host: process.env.LOKI_URL ?? 'http://localhost:3100',
+    labels: { app: 'web3' },
+    json: true,
+    format: format.json(),
+    replaceTimestamp: true,
+    onConnectionError: (err) => console.error(err)
+})
+
 // Export for api-server
 export const winstonLogger = winston.createLogger({
   level: logLevel,
   format: logFormat,
-  transports: [new winston.transports.Console()],
+  transports: [new winston.transports.Console(), loki],
 });
 
 const formatArgs = (args: any[]): string =>
