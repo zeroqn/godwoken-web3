@@ -16,7 +16,8 @@ const { registerInstrumentations } = require('@opentelemetry/instrumentation')
 // const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node')
 const { JaegerExporter } = require('@opentelemetry/exporter-jaeger')
 const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node')
-const { OTTracePropagator } = require('@opentelemetry/propagator-ot-trace')
+// const { OTTracePropagator } = require('@opentelemetry/propagator-ot-trace')
+const { JaegerPropagator } = require('@opentelemetry/propagator-jaeger')
 
 const hostName = process.env.OTEL_TRACE_HOST || 'localhost'
 
@@ -47,7 +48,8 @@ const init = (serviceName, environment) => {
   // Enable to see the spans printed in the console by the ConsoleSpanExporter
   // provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter())) 
 
-  provider.register({ propagator: new OTTracePropagator() })
+  // provider.register({ propagator: new OTTracePropagator() })
+  provider.register({ propagator: new JaegerPropagator() })
 
   console.log('tracing initialized')
 

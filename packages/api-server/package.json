@@ -42,6 +42,7 @@
     "@opentelemetry/instrumentation": "^0.33.0",
     "@opentelemetry/instrumentation-express": "^0.31.2",
     "@opentelemetry/instrumentation-http": "^0.33.0",
+    "@opentelemetry/propagator-jaeger": "^1.7.0",
     "@opentelemetry/propagator-ot-trace": "^0.26.1",
     "@opentelemetry/resources": "^1.7.0",
     "@opentelemetry/sdk-node": "^0.33.0",

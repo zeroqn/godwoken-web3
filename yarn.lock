@@ -1030,7 +1030,7 @@
   dependencies:
     "@opentelemetry/core" "1.7.0"
 
-"@opentelemetry/propagator-jaeger@1.7.0":
+"@opentelemetry/propagator-jaeger@1.7.0", "@opentelemetry/propagator-jaeger@^1.7.0":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/propagator-jaeger/-/propagator-jaeger-1.7.0.tgz#1c1439866e05ba81da303ad28286aa25d129bf03"
   integrity sha512-V7i/L1bx+R/ve4z6dTdn2jtvFxGThRsXS2wNb/tWZVfV8gqnePQp+HfoLrqB/Yz2iRPUcMWrcjx6vV78umvJFA==
