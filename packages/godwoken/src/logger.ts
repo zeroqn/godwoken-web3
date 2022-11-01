@@ -36,7 +36,7 @@ if (loggerEnv.logFormat === "json") {
 
 const loki = new LokiTransport({
     host: process.env.LOKI_URL ?? 'http://localhost:3100',
-    labels: { app: 'web3' },
+    labels: { service: 'web3' },
     json: true,
     format: format.json(),
     replaceTimestamp: true,
