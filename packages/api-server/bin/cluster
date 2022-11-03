@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
 require('../newrelic')
-require('../trace')
-// require('../trace_jaeger')
+// require('../trace')
+require('../trace_jaeger')
 require("../lib/app/cluster")
