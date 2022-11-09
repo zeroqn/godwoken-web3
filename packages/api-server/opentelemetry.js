@@ -2,12 +2,14 @@
 
 const process = require('process');
 const opentelemetry = require('@opentelemetry/sdk-node');
-const jaeger = require("@opentelemetry/exporter-jaeger")
 const instrumentations = require('@opentelemetry/auto-instrumentations-node');
+const jaeger = require("@opentelemetry/exporter-jaeger")
+const propagator = require('@opentelemetry/propagator-jaeger')
 
 // TODO: We can remove this after upgrade sdk-node to 0.34
 // Reference: https://github.com/open-telemetry/opentelemetry-js/pull/3388
 const jaegerExporter = new jaeger.JaegerExporter();
+const jaegerPropagator = propagator.JaegerPropagator();
 
 // Configuration (sdk 0.34 or later):
 // OTEL_TRACES_EXPORTER
@@ -30,6 +32,7 @@ const jaegerExporter = new jaeger.JaegerExporter();
 // Reference: https://github.com/open-telemetry/opentelemetry-js/blob/main/experimental/packages/opentelemetry-sdk-node/README.md
 const sdk = new opentelemetry.NodeSDK({
     traceExporter: jaegerExporter,
+    textMapPropagator: jaegerPropagator,
     instrumentations: [
         instrumentations.getNodeAutoInstrumentations({
             '@opentelemetry/instrumentation-redis': {},
