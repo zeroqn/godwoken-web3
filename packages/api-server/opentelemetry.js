@@ -12,17 +12,11 @@ const jaegerExporter = new jaeger.JaegerExporter();
 const jaegerPropagator = new propagator.JaegerPropagator();
 
 // Configuration (sdk 0.34 or later):
-// OTEL_TRACES_EXPORTER
-// OTEL_PROPAGATORS
-// OTEL_EXPORTER_OTLP_PROTOCOL
-// OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
-// OTEL_EXPORTER_OTLP_METRICS_PROTOCOL
-// OTEL_RESOURCE_ATTRIBUTES
-//
 // Disable:
 // OTEL_TRACES_EXPORTER: none
 //
 // Example(jaeger):
+// LOG_FORMAT: json (add trace id to log)
 // OTEL_TRACES_EXPORTER: jaeger
 // OTEL_PROPAGATORS: jaeger
 // OTEL_EXPORTER_OTLP_PROTOCOL: grpc (default is http/protobuf)
