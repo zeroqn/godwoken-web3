@@ -9,7 +9,7 @@ const propagator = require('@opentelemetry/propagator-jaeger')
 // TODO: We can remove this after upgrade sdk-node to 0.34
 // Reference: https://github.com/open-telemetry/opentelemetry-js/pull/3388
 const jaegerExporter = new jaeger.JaegerExporter();
-const jaegerPropagator = propagator.JaegerPropagator();
+const jaegerPropagator = new propagator.JaegerPropagator();
 
 // Configuration (sdk 0.34 or later):
 // OTEL_TRACES_EXPORTER
