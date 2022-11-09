@@ -17,7 +17,10 @@ const jaegerExporter = new jaeger.JaegerExporter();
 // OTEL_EXPORTER_OTLP_METRICS_PROTOCOL
 // OTEL_RESOURCE_ATTRIBUTES
 //
-// For jaeger example:
+// Disable:
+// OTEL_TRACES_EXPORTER: none
+//
+// Example(jaeger):
 // OTEL_TRACES_EXPORTER: jaeger
 // OTEL_PROPAGATORS: jaeger
 // OTEL_EXPORTER_OTLP_PROTOCOL: grpc (default is http/protobuf)
