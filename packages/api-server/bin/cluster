@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
 require('../newrelic')
-require('../opentelemetry_trace')
+require('../opentelemetry')
 require("../lib/app/cluster")
